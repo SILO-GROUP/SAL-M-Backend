@@ -4,10 +4,10 @@ from flask_marshmallow import Marshmallow
 
 api = Namespace('portfolio', description='Portfolio Item Lifecycle')
 
-db = SQLAlchemy( api )
-ma = Marshmallow( api )
+db = SQLAlchemy()
 
-db.create_all()
+
+ma = Marshmallow( api )
 
 # also swagger?
 model_system = api.model(
@@ -28,7 +28,7 @@ model_system = api.model(
 
 
 # db model
-class SystemModel( db.Model ):
+class SystemDBModel(db.Model):
     id = db.Column( db.Integer, primary_key=True )
     name = db.Column( db.String( 255 ) )
     description = db.Column( db.String( 255 ) )
@@ -38,11 +38,14 @@ class SystemModel( db.Model ):
 
 
 # marshmallow schema (swagger?)
-class SystemSchema( ma.Schema ):
+class SystemMASchema(ma.Schema):
     class Meta:
         fields = ( "id", "name", "description" )
-        model = SystemModel
+        model = SystemDBModel
 
+
+system_schema = SystemMASchema()
+systems_schema = SystemMASchema(many=True)
 
 # CRUD
 # PUT - UPDATE
@@ -51,10 +54,11 @@ class SystemSchema( ma.Schema ):
 # GET - FETCH
 
 @api.route('/system')
-class Portfolio(Resource):
+class PortfolioResource(Resource):
     def get(self):
+        systems = SystemDBModel.query.all()
         # retrieve system resources from the portfolio
-        return { "status": "list of resources" }
+        return systems_schema.dump( systems )
 
     @api.expect( model_system )
     def post(self):
@@ -63,3 +67,6 @@ class Portfolio(Resource):
 
     def delete(self):
         return { "status": "deleted a system" }
+
+
+api.add_resource( PortfolioResource )

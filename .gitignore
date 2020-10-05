@@ -3,3 +3,4 @@ static/
 templates/
 venv/*
 .idea/
+test.db

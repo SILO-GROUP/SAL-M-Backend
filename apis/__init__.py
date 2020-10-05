@@ -1,6 +1,6 @@
 from flask_restplus import Api
+from .portfolioresource import api as portfolio_namespace
 
-from .portfolio import api as portfolio_namespace
 
 api = Api(
     title="SAL/M Backend API",
