@@ -7,7 +7,9 @@ from apis import api
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+
 api.init_app( app )
 
 if __name__ == '__main__':
-    flask_app.run()
+    app.run()
